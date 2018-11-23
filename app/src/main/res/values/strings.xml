@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TestLogin</string>
+    <string name="login_state">登录是否成功：%1s</string>
+</resources>

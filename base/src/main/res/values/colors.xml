@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景 灰色 -->
+    <color name="bg_gray">#f0f0f0</color>
+    <color name="text_blue">#0095FA</color>
+    <!-- 字体颜色 白色-->
+    <color name="font_white">#FFFFFF</color>
+    <!-- 字体颜色 edittext -->
+    <color name="font_gray_9">#999999</color>
+    <!-- *************分割线 divider_ ************** -->
+    <!-- 分割线 分割线 -->
+    <color name="divider">#eaeaea</color>
+    <!-- 字体颜色 黄色色-->
+    <color name="font_yellow">#F9B20C</color>
+    <color name="text_black">#000000</color>
+
+    <!-- 字体颜色 蓝 -->
+    <color name="font_blue">#00b3e7</color>
+</resources>
