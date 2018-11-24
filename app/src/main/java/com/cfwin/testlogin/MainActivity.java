@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
@@ -23,12 +25,13 @@ import java.lang.reflect.Type;
 
 import static com.cfwin.base.utils.PrintWriteUtils.LOGPATH;
 
-public class MainActivity extends BaseActivityApi23 implements View.OnClickListener {
+public class MainActivity extends BaseActivityApi23 implements View.OnClickListener, Handler.Callback{
 
     private TextView mTVLoginInfo;
     private TextView mTVLoginStateInfo;
-    private final int MAX_COUNT = 5;
+    private final int MAX_COUNT = BuildConfig.DEBUG ? 5 : Integer.MAX_VALUE;
     private int count = 0;
+    private Handler mHander;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class MainActivity extends BaseActivityApi23 implements View.OnClickListe
         mTVLoginInfo = findViewById(R.id.loginInfo);
         mTVLoginStateInfo = findViewById(R.id.loginStateInfo);
         mTVLoginStateInfo.setText(getString(R.string.login_state, ""));
+        mHander = new Handler(this);
         isGrant(201, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE});
     }
 
@@ -52,6 +56,8 @@ public class MainActivity extends BaseActivityApi23 implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.getUrl:
+                mTVLoginStateInfo.setText(getString(R.string.login_state, ""));
+                mHander.removeCallbacksAndMessages(null);
                 //接口访问
                 getUrl();
                 break;
@@ -68,6 +74,21 @@ public class MainActivity extends BaseActivityApi23 implements View.OnClickListe
             count = 0;
             getStateInfo();
         }
+    }
+
+    @Override
+    public boolean handleMessage(Message message) {
+        if(message.what == 202){
+            getStateInfo();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHander.removeCallbacksAndMessages(null);
     }
 
     private void getUrl(){
@@ -107,7 +128,7 @@ public class MainActivity extends BaseActivityApi23 implements View.OnClickListe
             return;
         }
         vcode = "http://40.73.96.49:8084/api/Verify/GetStatus?vcode="+vcode;
-        HttpUtil.getInstance().request(vcode, new AjaxParams(), new ResponseCallback<MainActivity, ResponseInfo>(this) {
+        HttpUtil.getInstance().request(vcode, null, new ResponseCallback<MainActivity, ResponseInfo>(this) {
             @Override
             protected Type parseType() {
                 return null;
@@ -127,7 +148,7 @@ public class MainActivity extends BaseActivityApi23 implements View.OnClickListe
                             return;
                         }
                         tmp.count++;
-                        tmp.getStateInfo();
+                        tmp.mHander.sendEmptyMessageDelayed(202, 3000);
                     }
                 }
             }

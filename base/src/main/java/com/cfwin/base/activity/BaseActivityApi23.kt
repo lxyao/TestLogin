@@ -32,9 +32,7 @@ abstract class BaseActivityApi23 : AppCompatActivity(), Api23Util.IPermissionGra
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         TAG = this.javaClass.simpleName
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mApi23 = Api23Util(this, this)
-        }
+        mApi23 = Api23Util(this, this)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -44,7 +42,9 @@ abstract class BaseActivityApi23 : AppCompatActivity(), Api23Util.IPermissionGra
 
     override fun isGrant(requestCode: Int, permission: Array<String>): Boolean {
         mApi23?.let {
-            return it.isGrant(requestCode, permission)
+            val result = it.isGrant(requestCode, permission)
+            if(result)permissionGrant(requestCode, permission)
+            return result
         }
         return true
     }
